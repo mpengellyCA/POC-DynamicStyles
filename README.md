@@ -19,3 +19,9 @@ bun dev
 ```sh
 bun build
 ```
+
+### Serve Production Files
+
+```sh
+bun run server.js
+```
