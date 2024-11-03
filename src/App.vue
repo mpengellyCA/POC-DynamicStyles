@@ -29,9 +29,6 @@ function changeColor(color) {
 function changeBgColor(color) {
   settings.bgColor = color
 }
-function changePadding(padding) {
-  settings.padding = padding
-}
 function updateCss(scssVars) {
   stylesheet.value.innerHTML = '<style>' + compileString(scssVars + scss).css + `</style>`
 }
@@ -70,7 +67,7 @@ onMounted(() => {
       <div  style="display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%">
         <p>Update Main Padding:</p>
         <input type="number" v-model="settings.padding.value" max="250" min="0" step="5">
-        <div>|</div>
+        <p>|</p>
         <p>Update Radius:</p>
         <input type="number" v-model="settings.radius.value" max="250" min="0" step="5">
       </div>
