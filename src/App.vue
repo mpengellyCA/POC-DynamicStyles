@@ -2,6 +2,7 @@
 import {onMounted, reactive, useTemplateRef, watch} from "vue";
 import {compileString} from "sass";
 import {forEach} from "lodash";
+import scss from './assets/styles.scss?raw'
 const stylesheet = useTemplateRef('stylesheet')
 
 let settings = reactive({
@@ -32,36 +33,6 @@ function changePadding(padding) {
   settings.padding = padding
 }
 function updateCss(scssVars) {
-  let scss = `main {
-                  height: 100vh;
-                  width: 100vw;
-                  background: $color;
-                  padding: $padding;
-                }
-                .container {
-                  width: 100%;
-                  height: 100%;
-                  background: $bgColor;
-                  border-radius: $radius;
-                  border: hidden;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  flex-direction: column;
-                  gap: 25px;
-                  box-shadow: #222222 2px 2px 10px;
-                  padding: 10px;
-                }
-                p {
-                  color: $color;               
-                  font-family: monospace;
-                  text-shadow: #222222 2px 2px 10px;
-                }
-                p.title {
-                  font-size: 24px;
-                  font-weight: 900;
-                }
-                `
   stylesheet.value.innerHTML = '<style>' + compileString(scssVars + scss).css + `</style>`
 }
 onMounted(() => {
