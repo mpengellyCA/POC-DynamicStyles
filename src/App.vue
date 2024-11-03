@@ -5,19 +5,28 @@ import {forEach} from "lodash";
 const stylesheet = useTemplateRef('stylesheet')
 
 let settings = reactive({
-  padding: '25px',
-  color: 'black'
+  padding: { value: 25, unit: 'px'},
+  color: 'black',
+  bgColor: 'white',
+  radius: { value: 10, unit: 'px'}
 })
 watch(settings, updateScssVars)
 function updateScssVars() {
   let scssVars = '';
   forEach(settings,  (value, key) => {
-    scssVars += '$'+key+': '+value+';\n'
+    if (typeof value === 'string') {
+      scssVars += '$'+key+': '+value+';\n'
+    } else if (typeof value === 'object') {
+      scssVars += '$'+key+': '+value.value  + value.unit +';\n'
+    }
   })
   updateCss(scssVars)
 }
 function changeColor(color) {
   settings.color = color
+}
+function changeBgColor(color) {
+  settings.bgColor = color
 }
 function changePadding(padding) {
   settings.padding = padding
@@ -32,8 +41,8 @@ function updateCss(scssVars) {
                 .container {
                   width: 100%;
                   height: 100%;
-                  background: white;
-                  border-radius: 10px;
+                  background: $bgColor;
+                  border-radius: $radius;
                   border: hidden;
                   display: flex;
                   justify-content: center;
@@ -41,13 +50,16 @@ function updateCss(scssVars) {
                   flex-direction: column;
                   gap: 25px;
                   box-shadow: #222222 2px 2px 10px;
+                  padding: 10px;
                 }
                 p {
-                  color: $color;
-                  font-size: 24px;
-                  font-weight: 900;
+                  color: $color;               
                   font-family: monospace;
                   text-shadow: #222222 2px 2px 10px;
+                }
+                p.title {
+                  font-size: 24px;
+                  font-weight: 900;
                 }
                 `
   stylesheet.value.innerHTML = '<style>' + compileString(scssVars + scss).css + `</style>`
@@ -59,8 +71,9 @@ onMounted(() => {
 <template>
   <main>
     <div class="container">
-      <p>Hello World</p>
+      <p class="title">DynamicStyles - A POC for Dynamic SASS</p>
       <div style="display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%">
+        <p>Main Colour</p>
         <button @click="changeColor('red')">Red</button>
         <button @click="changeColor('blue')">Blue</button>
         <button @click="changeColor('green')">Green</button>
@@ -71,11 +84,24 @@ onMounted(() => {
         <button @click="changeColor('black')">Black</button>
         <button @click="changeColor('white')">White</button>
       </div>
+      <div style="display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%">
+        <p>Background Colour</p>
+        <button @click="changeBgColor('red')">Red</button>
+        <button @click="changeBgColor('blue')">Blue</button>
+        <button @click="changeBgColor('green')">Green</button>
+        <button @click="changeBgColor('yellow')">Yellow</button>
+        <button @click="changeBgColor('orange')">Orange</button>
+        <button @click="changeBgColor('purple')">Purple</button>
+        <button @click="changeBgColor('pink')">Pink</button>
+        <button @click="changeBgColor('black')">Black</button>
+        <button @click="changeBgColor('white')">White</button>
+      </div>
       <div  style="display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%">
-        <button @click="changePadding('25px')">Padding 25</button>
-        <button @click="changePadding('50px')">Padding 50</button>
-        <button @click="changePadding('75px')">Padding 75</button>
-        <button @click="changePadding('100px')">Padding 100</button>
+        <p>Update Main Padding:</p>
+        <input type="number" v-model="settings.padding.value" max="250" min="0" step="5">
+        <div>|</div>
+        <p>Update Radius:</p>
+        <input type="number" v-model="settings.radius.value" max="250" min="0" step="5">
       </div>
     </div>
   </main>
