@@ -1,12 +1,15 @@
 <script setup>
-import {onMounted, onUpdated, reactive, useTemplateRef, watch} from "vue";
+import {onMounted, onUpdated, reactive, ref, useTemplateRef, watch} from "vue";
 import {compileString} from "sass";
 import {forEach} from "lodash";
 import scss from './assets/styles.scss?raw'
 import {createTailwindcss} from "@mhsdesign/jit-browser-tailwindcss";
 
 const stylesheet = useTemplateRef('stylesheet')
-
+const main = useTemplateRef('main')
+const spinning = ref(false)
+const pulse = ref(false)
+const wiggle = ref(false)
 let settings = reactive({
   padding: { value: 25, unit: 'px'},
   color: 'black',
@@ -30,7 +33,21 @@ function updateScssVars() {
 const tailwind = createTailwindcss({
   tailwindConfig: {
     // disable normalize css
-    corePlugins: { preflight: false }
+    corePlugins: { preflight: false },
+    theme: {
+      extend: {
+        animation: {
+          'spin-slow': 'spin 10s linear infinite',
+          wiggle: 'wiggle 1s ease-in-out infinite',
+        },
+        keyframes: {
+          wiggle: {
+            '0%, 100%': { transform: 'rotate(-3deg)' },
+            '50%': { transform: 'rotate(3deg)' },
+          }
+        }
+      }
+    }
   }
 })
 function changeColor(color) {
@@ -42,18 +59,18 @@ function changeBgColor(color) {
 async function updateCss(scssVars) {
   const css = compileString(scssVars + scss).css
   const results = await tailwind.generateStylesFromContent(`@tailwind components;
-    @tailwind utilities;` + css, [document.documentElement.outerHTML])
+    @tailwind utilities;` + css, [main.value.outerHTML])
   stylesheet.value.innerHTML = '<style>' + results + '</style>'
 }
 onMounted(updateScssVars)
 onUpdated(updateScssVars)
 </script>
 <template>
-  <main>
-    <div class="wrapper">
-      <p class="title">DynamicStyles - A POC for Dynamic SASS</p>
-      <div class="flex gap-4 justify-center items-center w-full">
-        <p>Main Colour</p>
+  <main ref="main">
+    <div class="wrapper" >
+      <p class="title" :class="{'animate-spin-slow': spinning, 'animate-pulse': pulse, 'animate-wiggle': wiggle}">DynamicStyles - A POC for Dynamic SASS</p>
+      <div class="flex gap-2 justify-center items-center w-full">
+        <p class="mr-8">Main Colour:</p>
         <button @click="changeColor('red')">Red</button>
         <button @click="changeColor('blue')">Blue</button>
         <button @click="changeColor('green')">Green</button>
@@ -64,8 +81,8 @@ onUpdated(updateScssVars)
         <button @click="changeColor('black')">Black</button>
         <button @click="changeColor('white')">White</button>
       </div>
-      <div class="flex gap-4 justify-center items-center w-full">
-        <p>Background Colour</p>
+      <div class="flex gap-2 justify-center items-center w-full">
+        <p class="mr-8">Background Colour:</p>
         <button @click="changeBgColor('red')">Red</button>
         <button @click="changeBgColor('blue')">Blue</button>
         <button @click="changeBgColor('green')">Green</button>
@@ -89,6 +106,13 @@ onUpdated(updateScssVars)
         <p>|</p>
         <p>Title Size:</p>
         <input type="number" v-model="settings.titleSize.value" max="60" min="8" step="2">
+      </div>
+      <div class="flex gap-4 justify-center items-center w-full">
+        <p class="mr-8">Animations:</p>
+        <button @click="spinning = !spinning;">Spin</button>
+        <button @click="pulse = !pulse;">Pulse</button>
+        <button @click="wiggle = !wiggle;">Wiggle</button>
+        
       </div>
     </div>
   </main>

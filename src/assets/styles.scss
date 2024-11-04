@@ -12,12 +12,13 @@ main {
 }
 p {
   @apply font-bold font-mono;
-  text-shadow: #222222 3px 3px 5px;
+  text-shadow: #222222 2px 1px 5px;
   color: $color;
   font-size: $fontSize;
 }
 p.title {
   font-size: $titleSize;
+  @apply mb-12;
 }
 button {
   @apply outline-none border-0 shadow shadow-black;
@@ -25,6 +26,6 @@ button {
   color: $bgColor;
   padding: math.clamp(5px, math.round(math.div($padding, 5.5)), 20px) math.clamp(3px, math.round(math.div($padding, 7)), 15px);
   border-radius: math.clamp(0px, math.round(math.div($radius, 4)), 50px);
-  text-shadow: #222222 3px 3px 5px;
+  text-shadow: #000 2px 1px 2.5px;
   font-size: $fontSize;
 }
