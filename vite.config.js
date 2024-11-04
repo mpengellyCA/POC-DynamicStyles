@@ -18,7 +18,9 @@ export default defineConfig({
       output: {
         manualChunks: {
           lodash: ['lodash'],
-          sass: ['sass']
+          sass: ['sass'],
+          vue: ['vue'],
+          tailwind: ['@mhsdesign/jit-browser-tailwindcss']
         }
       }
     }

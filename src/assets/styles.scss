@@ -23,8 +23,8 @@ button {
   @apply outline-none border-0 shadow shadow-black;
   background: $color;
   color: $bgColor;
-  padding: math.clamp(3px, math.round(math.div($padding, 4)), 25px);
-  border-radius: math.clamp(0px, math.round(math.div($radius, 4)), 25px);
+  padding: math.clamp(5px, math.round(math.div($padding, 5.5)), 20px) math.clamp(3px, math.round(math.div($padding, 7)), 15px);
+  border-radius: math.clamp(0px, math.round(math.div($radius, 4)), 50px);
   text-shadow: #222222 3px 3px 5px;
   font-size: $fontSize;
 }
