@@ -9,7 +9,9 @@ let settings = reactive({
   padding: { value: 25, unit: 'px'},
   color: 'black',
   bgColor: 'white',
-  radius: { value: 10, unit: 'px'}
+  radius: { value: 10, unit: 'px'},
+  fontSize: { value: 16, unit: 'px'},
+  titleSize: { value: 24, unit: 'px'}
 })
 watch(settings, updateScssVars)
 function updateScssVars() {
@@ -70,6 +72,13 @@ onMounted(() => {
         <p>|</p>
         <p>Update Radius:</p>
         <input type="number" v-model="settings.radius.value" max="250" min="0" step="5">
+      </div>
+      <div  style="display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%">
+        <p>Font Size:</p>
+        <input type="number" v-model="settings.fontSize.value" max="40" min="8" step="2">
+        <p>|</p>
+        <p>Title Size:</p>
+        <input type="number" v-model="settings.titleSize.value" max="60" min="8" step="2">
       </div>
     </div>
   </main>
