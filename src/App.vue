@@ -4,12 +4,11 @@ import {compileString} from "sass";
 import {forEach} from "lodash";
 import scss from './assets/styles.scss?raw'
 import {createTailwindcss} from "@mhsdesign/jit-browser-tailwindcss";
-
-const stylesheet = useTemplateRef('stylesheet')
 const main = useTemplateRef('main')
 const spinning = ref(false)
 const pulse = ref(false)
 const wiggle = ref(false)
+const stylesheet = ref('<style></style>')
 let settings = reactive({
   padding: { value: 25, unit: 'px'},
   color: 'black',
@@ -60,7 +59,7 @@ async function updateCss(scssVars) {
   const css = compileString(scssVars + scss).css
   const results = await tailwind.generateStylesFromContent(`@tailwind components;
     @tailwind utilities;` + css, [main.value.outerHTML])
-  stylesheet.value.innerHTML = '<style>' + results + '</style>'
+  stylesheet.value = '<style>' + results + '</style>'
 }
 onMounted(updateScssVars)
 onUpdated(updateScssVars)
@@ -112,9 +111,8 @@ onUpdated(updateScssVars)
         <button @click="spinning = !spinning;">Spin</button>
         <button @click="pulse = !pulse;">Pulse</button>
         <button @click="wiggle = !wiggle;">Wiggle</button>
-        
       </div>
     </div>
   </main>
-  <div ref="stylesheet"></div>
+  <div v-html="stylesheet"></div>
 </template>
