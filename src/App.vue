@@ -1,8 +1,10 @@
 <script setup>
-import {onMounted, reactive, useTemplateRef, watch} from "vue";
+import {onMounted, onUpdated, reactive, useTemplateRef, watch} from "vue";
 import {compileString} from "sass";
 import {forEach} from "lodash";
 import scss from './assets/styles.scss?raw'
+import {createTailwindcss} from "@mhsdesign/jit-browser-tailwindcss";
+
 const stylesheet = useTemplateRef('stylesheet')
 
 let settings = reactive({
@@ -25,24 +27,32 @@ function updateScssVars() {
   })
   updateCss(scssVars)
 }
+const tailwind = createTailwindcss({
+  tailwindConfig: {
+    // disable normalize css
+    corePlugins: { preflight: false }
+  }
+})
 function changeColor(color) {
   settings.color = color
 }
 function changeBgColor(color) {
   settings.bgColor = color
 }
-function updateCss(scssVars) {
-  stylesheet.value.innerHTML = '<style>' + compileString(scssVars + scss).css + `</style>`
+async function updateCss(scssVars) {
+  const css = compileString(scssVars + scss).css
+  const results = await tailwind.generateStylesFromContent(`@tailwind components;
+    @tailwind utilities;` + css, [document.documentElement.outerHTML])
+  stylesheet.value.innerHTML = '<style>' + results + '</style>'
 }
-onMounted(() => {
-  updateScssVars()
-})
+onMounted(updateScssVars)
+onUpdated(updateScssVars)
 </script>
 <template>
   <main>
-    <div class="container">
+    <div class="wrapper">
       <p class="title">DynamicStyles - A POC for Dynamic SASS</p>
-      <div style="display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%">
+      <div class="flex gap-4 justify-center items-center w-full">
         <p>Main Colour</p>
         <button @click="changeColor('red')">Red</button>
         <button @click="changeColor('blue')">Blue</button>
@@ -54,7 +64,7 @@ onMounted(() => {
         <button @click="changeColor('black')">Black</button>
         <button @click="changeColor('white')">White</button>
       </div>
-      <div style="display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%">
+      <div class="flex gap-4 justify-center items-center w-full">
         <p>Background Colour</p>
         <button @click="changeBgColor('red')">Red</button>
         <button @click="changeBgColor('blue')">Blue</button>
@@ -66,14 +76,14 @@ onMounted(() => {
         <button @click="changeBgColor('black')">Black</button>
         <button @click="changeBgColor('white')">White</button>
       </div>
-      <div  style="display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%">
+      <div class="flex gap-4 justify-center items-center w-full">
         <p>Update Main Padding:</p>
         <input type="number" v-model="settings.padding.value" max="250" min="0" step="5">
         <p>|</p>
         <p>Update Radius:</p>
         <input type="number" v-model="settings.radius.value" max="250" min="0" step="5">
       </div>
-      <div  style="display: flex; gap: 10px; justify-content: center; align-items: center; width: 100%">
+      <div class="flex gap-4 justify-center items-center w-full">
         <p>Font Size:</p>
         <input type="number" v-model="settings.fontSize.value" max="40" min="8" step="2">
         <p>|</p>
